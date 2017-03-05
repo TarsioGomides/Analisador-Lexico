@@ -14,7 +14,7 @@ public class LeitorArquivo {
 		
 		
 		System.out.printf("Informe o caminho do arquivo texto:\n");
-	    String caminho_arquivo = ler.nextLine();//usa o Scanner para ler o caminho do arquivo 
+		String caminho_arquivo = ler.nextLine();//usa o Scanner para ler o caminho do arquivo 
 	    
 	    File arquivo = new File(caminho_arquivo);
 	     
