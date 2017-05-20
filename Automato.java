@@ -10,18 +10,63 @@
 public class Automato {
     
     private int estado;
-    public final int[] aceitacao = {2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21};    
+    public final int[] aceitacao = {2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21};
+    public final String[] tps = {"Palavra Reservada", "Identificador", "Numero Inteiro", "Numero Real", "Delimitador"};                                         
+    public final String[] classificacao = {tps[1], tps[2], tps[3], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4]};
     private boolean estado_final;
+    private ElementoDaTabelaDeSimbolos elemento;
+    private String palavras_reservadas[] = {"begin","boolean","do","else","end","if","integer","not","procedure",
+                                            "program","real","then","var","while", "or", "and"};
+    private int linha;
     
     public Automato(){
         estado = 0;
         estado_final = false;
+        linha = 1;
     }        
     
-    public void Transicao(Automato a, char simbolo){
+    public void Analise(Automato a){
+        //Percorre o código fonte separado em tokens
+        for(int i=0; i<TabelaDeSimbolos.tabela.size(); i++){
+            //Para cada token, percorre caractere por caractere
+            for(int j=0; j< TabelaDeSimbolos.tabela.get(i).getToken().length(); j++){     
+                estado_final = Transicao(a, TabelaDeSimbolos.tabela.get(i).getToken().charAt(j));                
+            }
+            if(estado_final){
+                estado_final = false;
+                //elemento = new ElementoDaTabelaDeSimbolos(TabelaDeSimbolos.tabela.get(i).getToken(), TipoToken(TabelaDeSimbolos.tabela.get(i).getToken()), linha);
+                TabelaDeSimbolos.tabela.get(i).setClassificacao(TipoToken(TabelaDeSimbolos.tabela.get(i).getToken()));
+                //System.out.println(elemento.toString());
+                estado = 0;
+            }
+            /*else{
+                System.out.println("----------VOLTANDO----------");
+            }*/
+        }
+    }
+    
+    public String TipoToken(String token){
+        if(isPalavraReservada(token)){
+            return tps[0];
+        }
+        for(int i=0; i<aceitacao.length; i++){
+            if(aceitacao[i] == estado){
+                return classificacao[i];
+            }
+        }
+        return "Invalido";
+        
+    }
+    
+    public boolean Transicao(Automato a, char simbolo){
         int estado = a.getEstado();
+        if(simbolo == '\n')
+            linha++;
         switch(estado){
             case 0:
+                if(simbolo == '{'){
+                    estado = 1;
+                }
                 if(Character.isLetter(simbolo)){
                     estado = 2;
                 }
@@ -72,22 +117,56 @@ public class Automato {
                 if(simbolo == '}')
                     estado = 0;
                 break;
-                
-                
-            //estado de rejeição
+            case 2:
+                if(Character.isLetter(simbolo) || Character.isDigit(simbolo) || simbolo == '_')
+                    estado = 2;
+            break;
+            case 3:
+                if(Character.isDigit(simbolo))
+                    estado = 3;
+                else if(simbolo == '.')
+                    estado = 4;
+            break;
+            case 4:
+            case 5:
+                if(Character.isDigit(simbolo))
+                    estado = 5;
+            break;
+            case 8:
+                if(simbolo == '=')
+                    estado = 11;
+            break;
+            case 13:
+                if(simbolo == '=')
+                    estado = 15;
+                else if(simbolo == '<')
+                    estado = 17;
+            break;
+            case 14:
+                if(simbolo == '=')
+                    estado = 16;
+            break;
+                                
+            //nenhuma transição é possível
             default:
-                //...
         }
-        
         a.setEstado(estado);
         for(int i=0; i<aceitacao.length; i++){
             if(estado==aceitacao[i]){
-                a.setEstado_final(true);
-                break;
+                return true;                
             }
         }
+        return false;
     }
 
+    public boolean isPalavraReservada(String token){
+        for(int i=0; i< palavras_reservadas.length; i++){
+            if(token.equals(palavras_reservadas[i]))
+                return true;
+        }
+        return false;
+    }
+    
     public boolean isEstado_final() {
         return estado_final;
     }

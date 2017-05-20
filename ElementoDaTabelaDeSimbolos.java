@@ -1,9 +1,10 @@
 public class ElementoDaTabelaDeSimbolos {
-	String token, tipo_token, linha_token;
+	String token, classificacao;
+        int linha_token;
 	
-	public ElementoDaTabelaDeSimbolos(String token, String tipo_token, String linha_token) {
+	public ElementoDaTabelaDeSimbolos(String token, String classificacao, int linha_token) {
 		this.token = token;
-		this.tipo_token = tipo_token;
+		this.classificacao = classificacao;
 		this.linha_token = linha_token;
 	}
 
@@ -15,20 +16,25 @@ public class ElementoDaTabelaDeSimbolos {
 		this.token = token;
 	}
 
-	public String getTipo_token() {
-		return tipo_token;
-	}
+        public String getClassificacao() {
+            return classificacao;
+        }
 
-	public void setTipo_token(String tipo_token) {
-		this.tipo_token = tipo_token;
-	}
+        public void setClassificacao(String classificacao) {
+            this.classificacao = classificacao;
+        }
 
-	public String getLinha_token() {
+	public int getLinha_token() {
 		return linha_token;
 	}
 
-	public void setLinha_token(String linha_token) {
+	public void setLinha_token(int linha_token) {
 		this.linha_token = linha_token;
 	}
 	
+        @Override
+        public String toString(){
+            return "Token: " + token + "\tClasssificacao: " + classificacao + "\tLinha: " + linha_token;
+            
+        }
 }
